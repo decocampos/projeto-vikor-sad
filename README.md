@@ -1,8 +1,8 @@
-# Projeto VIKOR SAD
+# Projeto VIKOR SAD (ESBOÇO/ETAPA INICIAL/AMBIENTAÇÃO)
 
 Aplicacao Web para replicar o estudo de caso do artigo "Multi-attribute evaluation method of nuclear island plant overall layout schemes based on linguistic intuitionistic fuzzy VIKOR".
 
-O objetivo inicial e entregar um MVP para a Fase 2 da disciplina: uma interface simples para visualizar alternativas, criterios, pesos e ranking VIKOR do artigo, com backend FastAPI preparado para calculos VIKOR numericos.
+O objetivo inicial é entregar um MVP para a Fase 2 da disciplina: uma interface simples para visualizar alternativas, criterios, pesos e ranking VIKOR do artigo, com backend FastAPI preparado para calculos VIKOR numericos.
 
 ## Artigo base
 
@@ -11,11 +11,9 @@ O objetivo inicial e entregar um MVP para a Fase 2 da disciplina: uma interface 
 - Periodico: Annals of Nuclear Energy 227 (2026) 111950
 - DOI: https://doi.org/10.1016/j.anucene.2025.111950
 
-Observacao: o PDF do artigo nao deve ser versionado neste repositorio publico. O projeto usa apenas dados transcritos das tabelas publicadas.
-
 ## Stack
 
-- Frontend: React + Vite
+- Frontend: React
 - Backend: FastAPI
 - Versionamento: Git + GitHub
 - Deploy: etapa seguinte
@@ -81,14 +79,3 @@ Se o backend estiver rodando, o frontend usa a API. Se nao estiver, ele usa um f
   "v": 0.5
 }
 ```
-
-## GitHub
-
-Crie no site do GitHub um repositorio publico vazio chamado `projeto-vikor-sad`, sem README e sem .gitignore. Depois conecte o repositorio local:
-
-```powershell
-git remote add origin https://github.com/<usuario>/projeto-vikor-sad.git
-git push -u origin main
-```
-
-Nao suba `node_modules`, `venv`, `.venv`, `dist` ou o PDF do artigo.
