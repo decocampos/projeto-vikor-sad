@@ -1,0 +1,31 @@
+# Local dependencies
+node_modules/
+frontend/node_modules/
+backend/venv/
+backend/.venv/
+
+# Build outputs
+dist/
+frontend/dist/
+.vite/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local article copy should not be committed to the public repository
+artigo.pdf
+frontend/src/assets/hero.png
