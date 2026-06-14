@@ -61,6 +61,14 @@ interface VikorResult {
   ranking: { id: string; modelo: string; imagem: string; Q: number; S: number; R: number }[];
 }
 
+interface DestinationOption {
+  id: string;
+  nome: string;
+  uf: string;
+  aeroporto: string;
+  distancia_km: number;
+}
+
 const emptyForm = {
   modelo: "",
   imagem: "",
@@ -77,6 +85,7 @@ function Dashboard() {
   const [form, setForm] = useState(emptyForm);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [destino, setDestino] = useState("");
+  const [destinations, setDestinations] = useState<DestinationOption[]>([]);
   const [weights, setWeights] = useState({
     aquisicao: 20,
     manutencao: 20,
@@ -95,6 +104,15 @@ function Dashboard() {
       .order("created_at", { ascending: true })
       .then(({ data, error }) => {
         if (!error && data) setAircrafts((data as AeronaveRow[]).map(mapRow));
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch(API_ENDPOINTS.destinations)
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data: DestinationOption[]) => setDestinations(data))
+      .catch(() => {
+        setDestinations([]);
       });
   }, []);
 
@@ -293,11 +311,27 @@ function Dashboard() {
             <div className="rounded-2xl border border-border bg-card p-6">
               <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Destino</label>
               <input
+                list="destinos-disponiveis"
                 value={destino}
                 onChange={(e) => setDestino(e.target.value)}
-                placeholder="Ex: Natal, Fernando de Noronha"
+                placeholder="Selecione ou digite um destino disponivel"
                 className="mt-2 w-full rounded-lg border border-input bg-background px-4 py-3 text-lg font-medium outline-none ring-primary/40 focus:ring-2"
               />
+              <datalist id="destinos-disponiveis">
+                {destinations.map((destination) => (
+                  <option
+                    key={destination.id}
+                    value={`${destination.nome}, ${destination.uf}`}
+                  >
+                    {destination.aeroporto} - {destination.distancia_km} km
+                  </option>
+                ))}
+              </datalist>
+              {destinations.length > 0 && (
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {destinations.length} destinos pre-carregados a partir de {ORIGIN}.
+                </div>
+              )}
             </div>
             <button
               onClick={handleVikor}
