@@ -121,6 +121,45 @@ function Dashboard() {
     [weights],
   );
 
+  // Ajusta um peso e redistribui os demais proporcionalmente para a soma ficar sempre 100.
+  function setWeight(key: keyof typeof weights, value: number) {
+    setWeights((prev) => {
+      const v = Math.max(0, Math.min(100, Math.round(value)));
+      const others = (Object.keys(prev) as (keyof typeof weights)[]).filter((k) => k !== key);
+      const remaining = 100 - v;
+      const othersTotal = others.reduce((sum, k) => sum + prev[k], 0);
+      const next = { ...prev, [key]: v };
+
+      if (othersTotal === 0) {
+        // Todos os outros estão em 0: distribui igualmente.
+        const base = Math.floor(remaining / others.length);
+        let leftover = remaining - base * others.length;
+        others.forEach((k) => {
+          next[k] = base + (leftover-- > 0 ? 1 : 0);
+        });
+      } else {
+        // Distribui proporcionalmente ao valor atual de cada peso.
+        const raw = others.map((k) => ({ k, exact: (prev[k] / othersTotal) * remaining }));
+        let allocated = 0;
+        raw.forEach((r) => {
+          next[r.k] = Math.floor(r.exact);
+          allocated += next[r.k];
+        });
+        // Sobra do arredondamento vai para os maiores restos fracionários.
+        let leftover = remaining - allocated;
+        raw
+          .sort((a, b) => (b.exact - Math.floor(b.exact)) - (a.exact - Math.floor(a.exact)))
+          .forEach((r) => {
+            if (leftover > 0) {
+              next[r.k] += 1;
+              leftover--;
+            }
+          });
+      }
+      return next;
+    });
+  }
+
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     const payload = {
@@ -349,12 +388,12 @@ function Dashboard() {
               <span className="text-xs text-muted-foreground">Soma: <b className="text-foreground">{totalWeight}</b></span>
             </div>
             <div className="space-y-4">
-              <Slider label="💰 Custo de Aquisição" value={weights.aquisicao} onChange={(v) => setWeights({ ...weights, aquisicao: v })} color="primary" />
-              <Slider label="🔧 Manutenção" value={weights.manutencao} onChange={(v) => setWeights({ ...weights, manutencao: v })} color="primary" />
-              <Slider label="⛽ Combustível" value={weights.combustivel} onChange={(v) => setWeights({ ...weights, combustivel: v })} color="primary" />
+              <Slider label="💰 Custo de Aquisição" value={weights.aquisicao} onChange={(v) => setWeight("aquisicao", v)} color="primary" />
+              <Slider label="🔧 Manutenção" value={weights.manutencao} onChange={(v) => setWeight("manutencao", v)} color="primary" />
+              <Slider label="⛽ Combustível" value={weights.combustivel} onChange={(v) => setWeight("combustivel", v)} color="primary" />
               <div className="my-2 border-t border-dashed border-border" />
-              <Slider label="👥 Capacidade PAX" value={weights.pax} onChange={(v) => setWeights({ ...weights, pax: v })} color="accent" />
-              <Slider label="📦 Capacidade de Carga" value={weights.carga} onChange={(v) => setWeights({ ...weights, carga: v })} color="accent" />
+              <Slider label="👥 Capacidade PAX" value={weights.pax} onChange={(v) => setWeight("pax", v)} color="accent" />
+              <Slider label="📦 Capacidade de Carga" value={weights.carga} onChange={(v) => setWeight("carga", v)} color="accent" />
             </div>
           </div>
         </div>
